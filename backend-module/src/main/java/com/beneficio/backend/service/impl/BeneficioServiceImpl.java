@@ -1,0 +1,31 @@
+package com.beneficio.backend.service.impl;
+
+import com.beneficio.backend.dto.BeneficioFilter;
+import com.beneficio.backend.dto.BeneficioResponse;
+import com.beneficio.backend.mapper.BeneficioMapper;
+import com.beneficio.backend.repository.BeneficioRepository;
+import com.beneficio.backend.repository.specification.BeneficioSpecification;
+import com.beneficio.backend.service.BeneficioService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class BeneficioServiceImpl implements BeneficioService {
+
+    private final BeneficioRepository repository;
+    private final BeneficioMapper mapper;
+
+    public BeneficioServiceImpl(BeneficioRepository repository, BeneficioMapper mapper) {
+        this.repository = repository;
+        this.mapper = mapper;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<BeneficioResponse> findAll(BeneficioFilter filter, Pageable pageable) {
+        return repository.findAll(BeneficioSpecification.filterBy(filter), pageable)
+                .map(mapper::toResponse);
+    }
+}
