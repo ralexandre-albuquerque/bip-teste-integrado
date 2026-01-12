@@ -2,3 +2,7 @@
 .idea/
 
 backend-module/target/
+
+*.class
+
+domain-module/target/
