@@ -15,7 +15,7 @@ spring:
   
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
     show-sql: true
     properties:
       hibernate:
@@ -23,10 +23,9 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
     open-in-view: false
 
-  logging:
-      level:
-        org.springframework.data: DEBUG
-
+  sql:
+    init:
+      mode: never
 
 server:
   port: 8080
