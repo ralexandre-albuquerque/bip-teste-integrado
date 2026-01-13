@@ -1,7 +1,9 @@
 package com.beneficio.backend.service;
 
 import com.beneficio.backend.dto.BeneficioFilter;
+import com.beneficio.backend.dto.BeneficioRequest;
 import com.beneficio.backend.dto.BeneficioResponse;
+import com.beneficio.backend.exception.BusinessException;
 import com.beneficio.backend.mapper.BeneficioMapper;
 import com.beneficio.backend.repository.BeneficioRepository;
 import com.beneficio.backend.service.impl.BeneficioServiceImpl;
@@ -23,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -124,5 +127,46 @@ class BeneficioServiceImplTest {
             // Assert
             verify(repository).findAll(any(Specification.class), eq(pageable));
         }
+    }
+
+    @Test
+    @DisplayName("Deve criar um benefício com sucesso quando o nome não existe")
+    void create_DeveCriarBeneficio_QuandoNomeNaoExiste() {
+        // Arrange
+        var request = new BeneficioRequest("Vale Refeição", "VR Diário", new BigDecimal("22.00"), true);
+        var beneficioEntity = new Beneficio(); // Supondo que sua entidade tenha esses campos
+        var beneficioResponse = new BeneficioResponse(1L, "Vale Refeição", "VR Diário", new BigDecimal("22.00"), true);
+
+        when(repository.existsByNomeIgnoreCase(request.nome())).thenReturn(false);
+        when(mapper.toEntity(request)).thenReturn(beneficioEntity);
+        when(repository.save(beneficioEntity)).thenReturn(beneficioEntity);
+        when(mapper.toResponse(beneficioEntity)).thenReturn(beneficioResponse);
+
+        // Act
+        BeneficioResponse result = service.create(request);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("Vale Refeição", result.nome());
+        verify(repository).existsByNomeIgnoreCase(request.nome());
+        verify(repository).save(beneficioEntity);
+    }
+
+    @Test
+    @DisplayName("Deve lançar BusinessException ao tentar criar benefício com nome duplicado")
+    void create_DeveLancarExcecao_QuandoNomeJaExiste() {
+        // Arrange
+        var request = new BeneficioRequest("Vale Refeição", "VR Diário", new BigDecimal("22.00"), true);
+
+        when(repository.existsByNomeIgnoreCase(request.nome())).thenReturn(true);
+
+        // Act & Assert
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
+            service.create(request);
+        });
+
+        assertEquals("Já existe um benefício cadastrado com o nome: Vale Refeição", exception.getMessage());
+        verify(repository).existsByNomeIgnoreCase(request.nome());
+        verify(repository, never()).save(any()); // Garante que não tentou salvar no banco
     }
 }

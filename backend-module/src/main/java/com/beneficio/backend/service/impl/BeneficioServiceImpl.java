@@ -1,11 +1,17 @@
 package com.beneficio.backend.service.impl;
 
 import com.beneficio.backend.dto.BeneficioFilter;
+import com.beneficio.backend.dto.BeneficioRequest;
 import com.beneficio.backend.dto.BeneficioResponse;
+import com.beneficio.backend.exception.BusinessException;
 import com.beneficio.backend.mapper.BeneficioMapper;
 import com.beneficio.backend.repository.BeneficioRepository;
 import com.beneficio.backend.repository.specification.BeneficioSpecification;
 import com.beneficio.backend.service.BeneficioService;
+import com.beneficio.domain.entity.Beneficio;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,5 +33,17 @@ public class BeneficioServiceImpl implements BeneficioService {
     public Page<BeneficioResponse> findAll(BeneficioFilter filter, Pageable pageable) {
         return repository.findAll(BeneficioSpecification.filterBy(filter), pageable)
                 .map(mapper::toResponse);
+    }
+
+    @Override
+    @Transactional
+    public BeneficioResponse create(BeneficioRequest request) {
+        if (repository.existsByNomeIgnoreCase(request.nome())) {
+            throw new BusinessException("Já existe um benefício cadastrado com o nome: " + request.nome());
+        }
+
+        Beneficio beneficio = mapper.toEntity(request);
+        beneficio = repository.save(beneficio);
+        return mapper.toResponse(beneficio);
     }
 }

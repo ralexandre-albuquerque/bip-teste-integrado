@@ -1,9 +1,7 @@
 package com.beneficio.backend.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+
 import java.math.BigDecimal;
 
 public record BeneficioRequest(
@@ -15,6 +13,9 @@ public record BeneficioRequest(
         String descricao,
 
         @NotNull(message = "O valor é obrigatório")
-        @PositiveOrZero(message = "O valor não pode ser negativo")
-        BigDecimal valor
+        @Positive(message = "O valor não pode ser zero")
+        BigDecimal valor,
+
+        @NotNull(message = "O status ativo é obrigatório")
+        Boolean ativo
 ) {}

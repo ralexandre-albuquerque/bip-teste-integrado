@@ -1,6 +1,7 @@
 package com.beneficio.backend.exception;
 
 import com.beneficio.backend.dto.ErrorResponse;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mapping.PropertyReferenceException;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -70,5 +73,39 @@ public class GlobalExceptionHandler {
                 null // Sem detalhes específicos para segurança (não expor stacktrace ao usuário)
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
+    /**
+     * Captura erros de regras de negócio (ex: nome duplicado, saldo insuficiente).
+     */
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException ex) {
+        log.error("Erro de negócio: {}", ex.getMessage());
+
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Violação de regra de negócio",
+                LocalDateTime.now(),
+                List.of(ex.getMessage())
+        );
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    /**
+     * Erro de JSON malformado (ex: "00", data inválida)
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        log.error("Erro na leitura do JSON: {}", ex.getMessage());
+
+        String mensagemAmigavel = "Erro na leitura de dados. Verifique a sintaxe, formatos ou valores numéricos.";
+
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                mensagemAmigavel,
+                LocalDateTime.now(),
+                List.of(ex.getMostSpecificCause().getMessage())
+        );
+        return ResponseEntity.badRequest().body(error);
     }
 }
