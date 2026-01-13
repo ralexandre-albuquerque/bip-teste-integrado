@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -47,9 +48,10 @@ public class BeneficioController {
 
     @PostMapping
     @Operation(summary = "Criar um novo benefício")
-    @ApiResponse(responseCode = "201", description = "Benefício criado",
-            content = @Content(schema = @Schema(implementation = BeneficioResponse.class)))
-// As respostas 400 e 500 virão automaticamente da configuração global
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Benefício criado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos ou nome duplicado")
+    })
     public ResponseEntity<BeneficioResponse> create(@Valid @RequestBody BeneficioRequest beneficioRequest) {
         BeneficioResponse novoBeneficio = beneficioService.create(beneficioRequest);
 
@@ -59,5 +61,20 @@ public class BeneficioController {
                 .toUri();
 
         return ResponseEntity.created(uri).body(novoBeneficio);
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "Atualizar um benefício", description = "Atualiza os dados de um benefício existente")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Benefício atualizado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Benefício não encontrado"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos ou regra de negócio violada")
+    })
+    public ResponseEntity<BeneficioResponse> update(
+            @PathVariable Long id,
+            @Valid @RequestBody BeneficioRequest request) {
+
+        BeneficioResponse response = beneficioService.update(id, request);
+        return ResponseEntity.ok(response);
     }
 }

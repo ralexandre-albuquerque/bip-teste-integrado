@@ -12,4 +12,6 @@ public interface BeneficioService {
     Page<BeneficioResponse> findAll(BeneficioFilter filter, Pageable pageable);
 
     BeneficioResponse create(BeneficioRequest beneficioRequest);
+
+    BeneficioResponse update(Long id, BeneficioRequest request);
 }

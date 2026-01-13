@@ -4,6 +4,7 @@ import com.beneficio.backend.dto.BeneficioFilter;
 import com.beneficio.backend.dto.BeneficioRequest;
 import com.beneficio.backend.dto.BeneficioResponse;
 import com.beneficio.backend.exception.BusinessException;
+import com.beneficio.backend.exception.ResourceNotFoundException;
 import com.beneficio.backend.mapper.BeneficioMapper;
 import com.beneficio.backend.repository.BeneficioRepository;
 import com.beneficio.backend.repository.specification.BeneficioSpecification;
@@ -40,6 +41,23 @@ public class BeneficioServiceImpl implements BeneficioService {
         }
 
         Beneficio beneficio = mapper.toEntity(request);
+        beneficio = repository.save(beneficio);
+        return mapper.toResponse(beneficio);
+    }
+
+    @Override
+    @Transactional
+    public BeneficioResponse update(Long id, BeneficioRequest request) {
+        Beneficio beneficio = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Benefício não encontrado com o ID: " + id));
+
+        if (!beneficio.getNome().equalsIgnoreCase(request.nome()) &&
+                repository.existsByNomeIgnoreCase(request.nome())) {
+            throw new BusinessException("Já existe outro benefício cadastrado com o nome: " + request.nome());
+        }
+
+        mapper.updateEntityFromRequest(request, beneficio);
+
         beneficio = repository.save(beneficio);
         return mapper.toResponse(beneficio);
     }

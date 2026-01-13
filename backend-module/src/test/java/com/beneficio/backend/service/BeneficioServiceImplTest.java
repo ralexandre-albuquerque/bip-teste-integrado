@@ -4,6 +4,7 @@ import com.beneficio.backend.dto.BeneficioFilter;
 import com.beneficio.backend.dto.BeneficioRequest;
 import com.beneficio.backend.dto.BeneficioResponse;
 import com.beneficio.backend.exception.BusinessException;
+import com.beneficio.backend.exception.ResourceNotFoundException;
 import com.beneficio.backend.mapper.BeneficioMapper;
 import com.beneficio.backend.repository.BeneficioRepository;
 import com.beneficio.backend.service.impl.BeneficioServiceImpl;
@@ -23,6 +24,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -168,5 +170,66 @@ class BeneficioServiceImplTest {
         assertEquals("Já existe um benefício cadastrado com o nome: Vale Refeição", exception.getMessage());
         verify(repository).existsByNomeIgnoreCase(request.nome());
         verify(repository, never()).save(any()); // Garante que não tentou salvar no banco
+    }
+
+    @Test
+    @DisplayName("Deve atualizar um benefício com sucesso")
+    void update_DeveAtualizarBeneficio_QuandoDadosSaoValidos() {
+        // Arrange
+        Long id = 1L;
+        var request = new BeneficioRequest("Novo Nome", "Nova Descrição", new BigDecimal("100.00"), true);
+        var beneficioExistente = new Beneficio();
+        beneficioExistente.setId(id);
+        beneficioExistente.setNome("Nome Antigo");
+
+        var beneficioResponse = new BeneficioResponse(id, "Novo Nome", "Nova Descrição", new BigDecimal("100.00"), true);
+
+        when(repository.findById(id)).thenReturn(Optional.of(beneficioExistente));
+        when(repository.existsByNomeIgnoreCase(request.nome())).thenReturn(false);
+        when(repository.save(any(Beneficio.class))).thenReturn(beneficioExistente);
+        when(mapper.toResponse(any(Beneficio.class))).thenReturn(beneficioResponse);
+
+        // Act
+        BeneficioResponse result = service.update(id, request);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("Novo Nome", result.nome());
+        verify(mapper).updateEntityFromRequest(request, beneficioExistente);
+        verify(repository).save(beneficioExistente);
+    }
+
+    @Test
+    @DisplayName("Deve lançar ResourceNotFoundException quando ID não existir no update")
+    void update_DeveLancarExcecao_QuandoIdNaoExiste() {
+        // Arrange
+        Long id = 99L;
+        var request = new BeneficioRequest("Nome", "Desc", BigDecimal.TEN, true);
+        when(repository.findById(id)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> service.update(id, request));
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Deve lançar BusinessException ao tentar atualizar para um nome que já existe em outro ID")
+    void update_DeveLancarExcecao_QuandoNomeJaExisteEmOutroRegistro() {
+        // Arrange
+        Long id = 1L;
+        var request = new BeneficioRequest("Nome Duplicado", "Desc", BigDecimal.TEN, true);
+
+        var beneficioExistente = new Beneficio();
+        beneficioExistente.setId(id);
+        beneficioExistente.setNome("Nome Original");
+
+        when(repository.findById(id)).thenReturn(Optional.of(beneficioExistente));
+        when(repository.existsByNomeIgnoreCase(request.nome())).thenReturn(true);
+
+        // Act & Assert
+        BusinessException exception = assertThrows(BusinessException.class, () -> service.update(id, request));
+
+        assertEquals("Já existe outro benefício cadastrado com o nome: Nome Duplicado", exception.getMessage());
+        verify(repository, never()).save(any());
     }
 }
