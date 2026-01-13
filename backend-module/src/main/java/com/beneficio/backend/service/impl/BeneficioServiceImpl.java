@@ -61,4 +61,13 @@ public class BeneficioServiceImpl implements BeneficioService {
         beneficio = repository.save(beneficio);
         return mapper.toResponse(beneficio);
     }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Não é possível excluir. Benefício não encontrado com o ID: " + id);
+        }
+        repository.deleteById(id);
+    }
 }

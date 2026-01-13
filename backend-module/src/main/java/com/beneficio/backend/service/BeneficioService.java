@@ -14,4 +14,6 @@ public interface BeneficioService {
     BeneficioResponse create(BeneficioRequest beneficioRequest);
 
     BeneficioResponse update(Long id, BeneficioRequest request);
+
+    void delete(Long id);
 }

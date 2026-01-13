@@ -63,6 +63,7 @@ public class BeneficioController {
         return ResponseEntity.created(uri).body(novoBeneficio);
     }
 
+
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar um benefício", description = "Atualiza os dados de um benefício existente")
     @ApiResponses({
@@ -76,5 +77,16 @@ public class BeneficioController {
 
         BeneficioResponse response = beneficioService.update(id, request);
         return ResponseEntity.ok(response);
+    }
+
+
+    @DeleteMapping
+    @Operation(summary = "Excluir um benefício")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Benefício excluído com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Benefício não encontrado")})
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        beneficioService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

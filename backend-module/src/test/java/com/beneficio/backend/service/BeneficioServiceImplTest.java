@@ -232,4 +232,30 @@ class BeneficioServiceImplTest {
         assertEquals("Já existe outro benefício cadastrado com o nome: Nome Duplicado", exception.getMessage());
         verify(repository, never()).save(any());
     }
+
+    @Test
+    @DisplayName("Deve excluir um benefício com sucesso")
+    void delete_DeveExcluir_QuandoIdExiste() {
+        // Arrange
+        Long id = 1L;
+        when(repository.existsById(id)).thenReturn(true);
+
+        // Act
+        service.delete(id);
+
+        // Assert
+        verify(repository, times(1)).deleteById(id);
+    }
+
+    @Test
+    @DisplayName("Deve lançar ResourceNotFoundException ao tentar excluir ID inexistente")
+    void delete_DeveLancarExcecao_QuandoIdNaoExiste() {
+        // Arrange
+        Long id = 99L;
+        when(repository.existsById(id)).thenReturn(false);
+
+        // Act & Assert
+        assertThrows(ResourceNotFoundException.class, () -> service.delete(id));
+        verify(repository, never()).deleteById(anyLong());
+    }
 }
