@@ -1,5 +1,6 @@
 package com.beneficio.domain.entity;
 
+import com.beneficio.domain.exception.BusinessException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
@@ -47,6 +48,26 @@ public class Beneficio {
         this.valor = valor;
         this.ativo = ativo;
     }
+
+    public void withdraw(BigDecimal quantia) {
+        validateOperationAmount(quantia);
+        if (this.valor.compareTo(quantia) < 0) {
+            throw new BusinessException("Saldo insuficiente no benefício ID: " + this.id);
+        }
+        this.valor = this.valor.subtract(quantia);
+    }
+
+    public void deposit(BigDecimal quantia) {
+        validateOperationAmount(quantia);
+        this.valor = this.valor.add(quantia);
+    }
+
+    private void validateOperationAmount(BigDecimal quantia) {
+        if (quantia == null || quantia.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException("O valor da operação deve ser maior que zero.");
+        }
+    }
+
 
     public Long getId() {
         return id;
@@ -117,4 +138,5 @@ public class Beneficio {
         // Se o ID está definido, usa ele para o hash
         return id != null ? id.hashCode() : System.identityHashCode(this);
     }
+
 }
