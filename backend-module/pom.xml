@@ -38,16 +38,20 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- validação, etc -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- depende do ejb-module (onde sua entidade Beneficio deve estar) -->
         <dependency>
             <groupId>com.beneficio</groupId>
             <artifactId>domain-module</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.beneficio</groupId>
+            <artifactId>ejb-module</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -67,6 +71,12 @@
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>1.5.5.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>com.beneficio</groupId>
+            <artifactId>ejb-module</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

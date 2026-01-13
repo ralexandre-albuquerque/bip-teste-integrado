@@ -21,6 +21,7 @@
 
     <modules>
         <module>domain-module</module>
+        <module>ejb-module</module>
         <module>backend-module</module>
     </modules>
 

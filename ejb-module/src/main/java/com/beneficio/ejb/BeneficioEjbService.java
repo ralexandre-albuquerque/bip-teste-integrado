@@ -1,11 +1,13 @@
-package com.example.ejb;
+package com.beneficio.ejb;
 
-import jakarta.ejb.Stateless;
+import com.beneficio.domain.entity.Beneficio;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 
-@Stateless
+@Service
 public class BeneficioEjbService {
 
     @PersistenceContext
