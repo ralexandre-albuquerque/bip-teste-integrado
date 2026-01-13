@@ -3,27 +3,22 @@ package com.beneficio.backend.mapper;
 import com.beneficio.backend.dto.BeneficioRequest;
 import com.beneficio.backend.dto.BeneficioResponse;
 import com.beneficio.domain.entity.Beneficio;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Component
-public class BeneficioMapper {
-    public BeneficioResponse toResponse(Beneficio entity) {
-        if (entity == null) return null;
-        return new BeneficioResponse(
-                entity.getId(),
-                entity.getNome(),
-                entity.getDescricao(),
-                entity.getValor(),
-                entity.getAtivo()
-        );
-    }
+@Mapper(
+        componentModel = "spring",
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+)
+public interface BeneficioMapper {
 
-    public Beneficio toEntity(BeneficioRequest request) {
-        if (request == null) return null;
-        return new Beneficio(request.nome(),
-                request.descricao(),
-                request.valor(),
-                request.ativo()
-        );
-    }
+    // Converte Request para Entidade (Create)
+    Beneficio toEntity(BeneficioRequest request);
+
+    // Converte Entidade para Response (Read)
+    BeneficioResponse toResponse(Beneficio entity);
+
+    // Atualiza a Entidade existente com os dados do Request (Update)
+    void updateEntityFromRequest(BeneficioRequest request, @MappingTarget Beneficio entity);
 }
