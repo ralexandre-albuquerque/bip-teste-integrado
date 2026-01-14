@@ -8,10 +8,10 @@ import com.beneficio.backend.exception.ResourceNotFoundException;
 import com.beneficio.backend.mapper.BeneficioMapper;
 import com.beneficio.backend.repository.BeneficioRepository;
 import com.beneficio.backend.repository.specification.BeneficioSpecification;
+import com.beneficio.backend.service.BeneficioApiService;
 import com.beneficio.backend.service.BeneficioService;
 import com.beneficio.domain.entity.Beneficio;
 import com.beneficio.domain.exception.BusinessException;
-import com.beneficio.ejb.BeneficioEjbService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,12 +22,12 @@ public class BeneficioServiceImpl implements BeneficioService {
 
     private final BeneficioRepository repository;
     private final BeneficioMapper mapper;
-    private final BeneficioEjbService ejbService;
+    private final BeneficioApiService beneficioApiService;
 
-    public BeneficioServiceImpl(BeneficioRepository repository, BeneficioMapper mapper, BeneficioEjbService ejbService) {
+    public BeneficioServiceImpl(BeneficioRepository repository, BeneficioMapper mapper, BeneficioApiService beneficioApiService) {
         this.repository = repository;
         this.mapper = mapper;
-        this.ejbService = ejbService;
+        this.beneficioApiService = beneficioApiService;
     }
 
     @Override
@@ -78,11 +78,7 @@ public class BeneficioServiceImpl implements BeneficioService {
     @Override
     @Transactional
     public void transfer(TransferRequest request) {
-        ejbService.transfer(
-                request.fromId(),
-                request.toId(),
-                request.amount()
-        );
+        beneficioApiService.executeTransfer(request);
     }
 
 }

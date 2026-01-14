@@ -3,9 +3,11 @@ package com.beneficio.backend.service;
 import com.beneficio.backend.dto.TransferRequest;
 import com.beneficio.domain.exception.BusinessException;
 import com.beneficio.ejb.BeneficioEjbService;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
+@Service
 public class BeneficioApiService {
 
     private final BeneficioEjbService beneficioEjbService;

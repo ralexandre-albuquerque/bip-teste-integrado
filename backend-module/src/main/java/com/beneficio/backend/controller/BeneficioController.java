@@ -74,12 +74,12 @@ public class BeneficioController {
     }
 
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     @Operation(summary = "Excluir um benefício")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Benefício excluído com sucesso"),
             @ApiResponse(responseCode = "404", description = "Benefício não encontrado")})
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         beneficioService.delete(id);
         return ResponseEntity.noContent().build();
     }
