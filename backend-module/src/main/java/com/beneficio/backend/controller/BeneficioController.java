@@ -66,7 +66,7 @@ public class BeneficioController {
             @ApiResponse(responseCode = "400", description = "Dados inválidos ou regra de negócio violada")
     })
     public ResponseEntity<BeneficioResponse> update(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @Valid @RequestBody BeneficioRequest request) {
 
         BeneficioResponse response = beneficioService.update(id, request);
