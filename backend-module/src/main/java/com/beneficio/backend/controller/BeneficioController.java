@@ -1,9 +1,6 @@
 package com.beneficio.backend.controller;
 
-import com.beneficio.backend.dto.BeneficioFilter;
-import com.beneficio.backend.dto.BeneficioRequest;
-import com.beneficio.backend.dto.BeneficioResponse;
-import com.beneficio.backend.dto.PagedModel;
+import com.beneficio.backend.dto.*;
 import com.beneficio.backend.service.BeneficioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,16 +10,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1/beneficios")
@@ -88,5 +82,23 @@ public class BeneficioController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         beneficioService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    @PostMapping("/transferencias")
+    @Operation(
+            summary = "Transferir valor entre benefícios",
+            description = "Realiza a transferência de valor entre dois benefícios"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Transferência realizada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos ou regra de negócio violada"),
+            @ApiResponse(responseCode = "404", description = "Benefício de origem ou destino não encontrado")
+    })
+    public ResponseEntity<Void> transfer(
+            @Valid @RequestBody TransferRequest request) {
+
+        beneficioService.transfer(request);
+        return ResponseEntity.ok().build();
     }
 }

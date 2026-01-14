@@ -3,6 +3,7 @@ package com.beneficio.backend.service;
 import com.beneficio.backend.dto.BeneficioFilter;
 import com.beneficio.backend.dto.BeneficioRequest;
 import com.beneficio.backend.dto.BeneficioResponse;
+import com.beneficio.backend.dto.TransferRequest;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,4 +17,6 @@ public interface BeneficioService {
     BeneficioResponse update(Long id, BeneficioRequest request);
 
     void delete(Long id);
+
+    void transfer(@Valid TransferRequest request);
 }

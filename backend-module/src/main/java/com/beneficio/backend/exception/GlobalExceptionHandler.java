@@ -1,6 +1,7 @@
 package com.beneficio.backend.exception;
 
 import com.beneficio.backend.dto.ErrorResponse;
+import com.beneficio.domain.exception.BusinessException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

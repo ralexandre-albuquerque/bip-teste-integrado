@@ -30,7 +30,26 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.1.0</version>
         </dependency>
+        <!-- Driver do PostgreSQL (Necessário para rodar e para o Testcontainers) -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
+        <!-- Testcontainers PostgreSQL (Apenas para escopo de teste) -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Suporte do Testcontainers para JUnit 5 -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- H2 para dev -->
         <dependency>
             <groupId>com.h2database</groupId>
@@ -71,12 +90,6 @@
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>1.5.5.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>com.beneficio</groupId>
-            <artifactId>ejb-module</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 
