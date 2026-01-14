@@ -12,14 +12,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Build backend
-        run: mvn -B -f backend-module clean package
+      - name: Build Projeto Completo (Raiz e Módulos)
+        run: mvn -B clean package
 
-      # --- FRONTEND ---
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Build frontend
-        run: npm install
