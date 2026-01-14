@@ -5,6 +5,7 @@ import { BeneficioService } from '../../services/beneficio.service';
 import { Beneficio } from '../../models/beneficio';
 import { finalize } from 'rxjs/operators';
 import { RouterModule } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-beneficio-crud',
@@ -19,9 +20,11 @@ export class BeneficioCrudComponent implements OnInit {
   beneficios: Beneficio[] = [];
   loading = false;
   submitting = false;
-  message = '';
+  message?: string;
   isError = false;
   deletingId: number | null = null;
+  isEditing = false;
+  editingId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -84,23 +87,37 @@ export class BeneficioCrudComponent implements OnInit {
       ativo: this.form.value.ativo
     };
 
-    this.beneficioService.create(payload)
-      .pipe(finalize(() => {
-        this.submitting = false;
-        this.cdr.detectChanges();
-      }))
-      .subscribe({
-        next: (created) => {
-          this.message = 'Benefício criado com sucesso!';
-          this.isError = false;
-          this.form.reset({ nome: '', descricao: '', valor: 0, ativo: true });
-          this.load(); // Recarrega a lista para garantir sincronia
-        },
-        error: (err) => {
-          this.isError = true;
-          this.message = err?.error?.message || 'Erro ao criar benefício';
-        }
-      });
+    if (this.isEditing && this.editingId) {
+
+        this.beneficioService.update(this.editingId, payload).subscribe({
+          next: () => {
+            this.message = 'Atualizado com sucesso!';
+            this.cancelEdit();
+            this.load();
+          },
+          error: (err) => this.handleError(err)
+        });
+
+      } else {
+
+        this.beneficioService.create(payload)
+          .pipe(finalize(() => {
+            this.submitting = false;
+            this.cdr.detectChanges();
+          }))
+          .subscribe({
+            next: (created) => {
+              this.message = 'Benefício criado com sucesso!';
+              this.isError = false;
+              this.form.reset({ nome: '', descricao: '', valor: 0, ativo: true });
+              this.load(); // Recarrega a lista para garantir sincronia
+            },
+            error: (err) => {
+              this.isError = true;
+              this.message = err?.error?.message || 'Erro ao criar benefício';
+            }
+          });
+      }
   }
 
   confirmDelete(id: number): void {
@@ -128,5 +145,58 @@ export class BeneficioCrudComponent implements OnInit {
   formatted(value: number | null | undefined): string {
     if (value == null) return '0,00';
     return this.decimalPipe.transform(value, '1.2-2') ?? '0,00';
+  }
+
+  prepareEdit(b: Beneficio): void {
+    this.isEditing = true;
+    this.editingId = b.id;
+    this.message = '';
+
+    // Preenche o formulário com os dados da linha clicada
+    this.form.patchValue({
+      nome: b.nome,
+      descricao: b.descricao,
+      valor: b.valor,
+      ativo: b.ativo
+    });
+
+    // Rola a tela para o topo para o usuário ver o formulário
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  cancelEdit(): void {
+    this.isEditing = false;
+    this.editingId = null;
+    this.form.reset({ nome: '', descricao: '', valor: 0, ativo: true });
+  }
+
+  private handleError(err: unknown): void {
+    this.isError = true;
+    this.message = this.extractMessage(err) || 'Erro ao comunicar com o servidor';
+    console.error('Erro HTTP:', err);
+    this.submitting = false;
+    this.cdr.detectChanges();
+  }
+
+  private extractMessage(err: unknown): string | null {
+    if (!err) return null;
+    // Se for HttpErrorResponse, tenta extrair message
+    if ((err as HttpErrorResponse).error) {
+      const httpErr = err as HttpErrorResponse;
+      try {
+        // backend pode mandar { message: '...' } ou texto simples
+        const body = httpErr.error;
+        if (typeof body === 'string') return body;
+        if (body && typeof body.message === 'string') return body.message;
+      } catch {
+        // ignore
+      }
+    }
+    if (typeof err === 'string') return err;
+    return null;
+  }
+
+  closeMessage() {
+      this.message = undefined;
   }
 }

@@ -1,11 +1,26 @@
 <!-- src/app/app.html -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
   <div class="container">
-    <a class="navbar-brand" href="#">Sistema de Benefícios</a>
-    <div class="navbar-nav">
-      <!-- Links de navegação -->
-      <a class="nav-link" routerLink="/beneficios" routerLinkActive="active">Gerenciar</a>
-      <a class="nav-link" routerLink="/transferir" routerLinkActive="active">Transferir</a>
+    <a class="navbar-brand fw-bold" href="#">
+      Sistema de Benefícios
+    </a>
+
+    <div class="navbar-nav ms-auto">
+      <a
+        routerLink="/beneficios"
+        routerLinkActive="active"
+        class="nav-link px-3 mx-1 rounded custom-nav-link"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Gerenciar
+      </a>
+      <a
+        routerLink="/transferir"
+        routerLinkActive="active"
+        class="nav-link px-3 mx-1 rounded custom-nav-link"
+      >
+        Transferir
+      </a>
     </div>
   </div>
 </nav>

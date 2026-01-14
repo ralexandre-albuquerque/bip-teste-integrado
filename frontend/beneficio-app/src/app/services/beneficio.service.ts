@@ -41,5 +41,9 @@ export class BeneficioService {
 
   delete(id: number): Observable<void> {
       return this.http.delete<void>(`${this.API_URL}/${id}`);
-    }
+  }
+
+  update(id: number, beneficio: Partial<Beneficio>): Observable<Beneficio> {
+    return this.http.put<Beneficio>(`${this.API_URL}/${id}`, beneficio);
+  }
 }
