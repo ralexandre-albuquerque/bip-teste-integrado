@@ -10,3 +10,5 @@ domain-module/target/
 ejb-module/target/
 
 *.jar
+
+frontend/beneficio-app/.vscode/

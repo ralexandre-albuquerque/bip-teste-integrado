@@ -1,0 +1,24 @@
+/* beneficio-crud.component.scss */
+
+/* Alinha verticalmente as células da tabela */
+.table td, .table th {
+  vertical-align: middle;
+}
+
+/* Espaçamento entre os botões */
+button.btn-sm {
+  margin-left: 5px;
+}
+
+/* Estilo para mensagens de sucesso e erro */
+.alert-success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
+.alert-danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}

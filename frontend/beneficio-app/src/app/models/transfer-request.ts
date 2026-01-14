@@ -1,5 +1,5 @@
 export interface TransferRequest {
-  originId: number;
-  destinationId: number;
+  fromId: number;
+  toId: number;
   amount: number;
 }

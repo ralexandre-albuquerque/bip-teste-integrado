@@ -28,6 +28,8 @@ public class BeneficioEjbService {
 
         em.merge(from);
         em.merge(to);
+
+        em.flush();
     }
 
     private void validateIdentifiers(Long fromId, Long toId) {
