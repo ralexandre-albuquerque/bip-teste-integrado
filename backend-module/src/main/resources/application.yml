@@ -1,12 +1,17 @@
 spring:
   application:
     name: beneficios-api
+
   
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
     username: sa
     password:
+    hikari:
+      leak-detection-threshold: 2000
+      max-lifetime: 60000
+      connection-timeout: 30000
 
   h2:
     console:
@@ -26,6 +31,10 @@ spring:
   logging:
       level:
         org.springframework.data: DEBUG
+        org.hibernate.SQL: DEBUG
+        org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+        org.springframework.transaction: DEBUG
+        org.springframework.orm.jpa: DEBUG
 
 
 server:
