@@ -5,6 +5,8 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DOCKER_HOST: unix:///var/run/docker.sock
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 17
@@ -12,5 +14,40 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Build backend
-        run: mvn -B -f backend-module clean package
+
+
+      - name: Validate Docker (diagnóstico)
+        run: |
+          echo "== docker version =="
+          docker --version || true
+          echo "== docker info =="
+          docker info || true
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build e Testes de Integração (Maven)
+
+        run: mvn -B clean verify
+
+      # --- Início das etapas Angular ---
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'                    # habilita cache automático para dependências
+          cache-dependency-path: 'frontend/beneficio-app/package-lock.json'
+
+      - name: Install Angular dependencies
+        run: npm ci                     # mais rápido e reprodutível em CI
+        working-directory: ./frontend/beneficio-app
+
+      - name: Build Angular app
+        run: npm run build -- --configuration production
+        working-directory: ./frontend/beneficio-app
+

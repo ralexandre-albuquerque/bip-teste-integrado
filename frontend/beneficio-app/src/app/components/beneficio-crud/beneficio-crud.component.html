@@ -1,0 +1,89 @@
+<div class="container mt-4">
+  <!-- Card Principal -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+      <h5 class="mb-0 text-primary fw-bold">Gerenciar Benefícios</h5>
+    </div>
+
+    <div class="card-body">
+      <!-- Formulário com Grid Corrigido -->
+      <form [formGroup]="form" (ngSubmit)="submit()" class="mb-4">
+        <div class="row g-3 align-items-center">
+
+          <!-- Nome (4 colunas) -->
+          <div class="col-md-3">
+            <input formControlName="nome" class="form-control" placeholder="Nome" />
+          </div>
+
+          <!-- Descrição (4 colunas) -->
+          <div class="col-md-4">
+            <input formControlName="descricao" class="form-control" placeholder="Descrição" />
+          </div>
+
+          <!-- Valor (2 colunas) -->
+          <div class="col-md-2">
+            <div class="input-group">
+              <span class="input-group-text">R$</span>
+              <input formControlName="valor" type="number" class="form-control" placeholder="0" />
+            </div>
+          </div>
+
+          <!-- Ativo (1 coluna) -->
+          <div class="col-md-1 d-flex justify-content-center">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" formControlName="ativo" id="ativoCheck" />
+              <label class="form-check-label fw-bold" for="ativoCheck">Ativo</label>
+            </div>
+          </div>
+
+          <!-- Botão (2 colunas) - d-grid evita sobreposição -->
+          <div class="col-md-2 d-grid">
+            <button class="btn" [ngClass]="isEditing ? 'btn-warning' : 'btn-primary'" type="submit">
+              <i class="bi" [ngClass]="isEditing ? 'bi-save' : 'bi-plus-lg'"></i>
+              {{ isEditing ? ' Salvar' : ' Incluir' }}
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Alerta de Mensagem -->
+      <div *ngIf="message" class="alert alert-dismissible fade show" [ngClass]="isError ? 'alert-danger' : 'alert-success'">
+        {{ message }}
+        <button type="button" class="btn-close" (click)="message = ''"></button>
+      </div>
+
+      <hr>
+
+      <!-- Tabela -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+          <tr>
+            <th>Nome</th>
+            <th>Descrição</th>
+            <th class="text-end">Valor</th>
+            <th class="text-center">Ativo</th>
+            <th class="text-end">Ações</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let b of beneficios">
+            <td class="fw-bold">{{ b.nome }}</td>
+            <td class="text-muted">{{ b.descricao }}</td>
+            <td class="text-end">R$ {{ formatted(b.valor) }}</td>
+            <td class="text-center">
+                <span class="badge" [ngClass]="b.ativo ? 'bg-success' : 'bg-secondary'">
+                  {{ b.ativo ? 'Sim' : 'Não' }}
+                </span>
+            </td>
+            <td class="text-end">
+              <button class="btn btn-sm btn-outline-info me-2" (click)="prepareEdit(b)">Editar</button>
+              <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(b.id)">Excluir</button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

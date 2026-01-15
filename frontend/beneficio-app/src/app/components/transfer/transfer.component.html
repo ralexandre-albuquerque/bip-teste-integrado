@@ -1,0 +1,81 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Transferência de Benefício</h5>
+          <div *ngIf="loadingBeneficios" class="spinner-border spinner-border-sm text-primary" role="status"></div>
+        </div>
+
+        <div class="card-body">
+          <form [formGroup]="transferForm" (ngSubmit)="onSubmit()">
+
+            <div class="mb-3">
+              <label class="form-label">Conta de Origem</label>
+              <select class="form-select" formControlName="fromId" [disabled]="loadingBeneficios">
+                <option [ngValue]="null" disabled>Escolha a conta de origem</option>
+                <option *ngFor="let b of beneficios" [value]="b.id">
+                  {{ b.nome }} - Saldo Atual: R$ {{ formattedBalance(b.valor) }}
+                </option>
+              </select>
+              <div *ngIf="hasError('fromId')" class="text-danger small mt-1">
+                Conta de origem é obrigatória.
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Conta de Destino</label>
+              <select class="form-select" formControlName="toId" [disabled]="loadingBeneficios">
+                <option [ngValue]="null" disabled>Escolha a conta de destino</option>
+                <option *ngFor="let b of beneficios" [value]="b.id">
+                  {{ b.descricao || ('ID: ' + b.id) }} - Saldo: R$ {{ formattedBalance(b.valor) }}
+                </option>
+              </select>
+              <div *ngIf="transferForm.hasError('sameAccount') && (transferForm.get('toId')?.touched || transferForm.get('fromId')?.touched)" class="text-danger small mt-1">
+                Conta de destino deve ser diferente da origem.
+              </div>
+              <div *ngIf="hasError('toId')" class="text-danger small mt-1">
+                Conta de destino é obrigatória.
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label d-flex justify-content-between">
+                <span>Valor (R$)</span>
+                <small class="text-muted">Saldo origem: R$ {{ formattedBalance(originBalance) }}</small>
+              </label>
+              <input
+                type="number"
+                class="form-control"
+                formControlName="amount"
+                min="0.01"
+                step="0.01"
+                [disabled]="loadingBeneficios"
+                placeholder="0,00" />
+              <div *ngIf="hasError('amount') && transferForm.get('amount')?.hasError('min')" class="text-danger small mt-1">
+                Valor deve ser maior que zero.
+              </div>
+              <div *ngIf="hasError('amount') && transferForm.get('amount')?.hasError('exceedBalance')" class="text-danger small mt-1">
+                Valor excede o saldo disponível da conta de origem.
+              </div>
+              <div *ngIf="hasError('amount') && transferForm.get('amount')?.hasError('required')" class="text-danger small mt-1">
+                Valor é obrigatório.
+              </div>
+            </div>
+
+            <div class="d-grid gap-2">
+              <button class="btn btn-success" type="submit" [disabled]="transferForm.invalid || submitting">
+                <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2"></span>
+                Transferir
+              </button>
+            </div>
+          </form>
+
+          <div *ngIf="message" class="mt-3 alert" [ngClass]="isError ? 'alert-danger' : 'alert-success'">
+            {{ message }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
