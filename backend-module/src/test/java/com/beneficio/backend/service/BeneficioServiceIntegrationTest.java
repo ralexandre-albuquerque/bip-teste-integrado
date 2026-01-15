@@ -1,19 +1,16 @@
 package com.beneficio.backend.service;
 
-import com.beneficio.backend.dto.BeneficioRequest;
 import com.beneficio.backend.repository.BeneficioRepository;
 import com.beneficio.domain.entity.Beneficio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.TestConstructor;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -27,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @Transactional
 @Testcontainers(disabledWithoutDocker = true)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DisplayName("Testes de Integração - BeneficioService")
 class BeneficioServiceIntegrationTest {
 
@@ -57,7 +55,7 @@ class BeneficioServiceIntegrationTest {
         beneficio.setNome("Auxílio Docker");
         beneficio.setValor(BigDecimal.valueOf(100.0));
 
-        Beneficio salvo = beneficioRepository.save(beneficio);
+        Beneficio salvo = beneficioRepository.saveAndFlush(beneficio);
 
         assertNotNull(salvo.getId());
     }

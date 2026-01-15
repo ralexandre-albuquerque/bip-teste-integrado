@@ -1,26 +1,8 @@
-ule/src/test/java/com/beneficio/ejb/BeneficioEjbServiceTest.javaspring:
+spring:
   datasource:
-    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    properties:
+    driver-class-name: org.postgresql.Driver
+    jpa:
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
       hibernate:
-        format_sql: true
-        show_sql: false
-        # Para testes com H2, use o dialeto do H2.
-        # (Forçar PostgreSQLDialect aqui às vezes dá dor de cabeça no schema generation)
-        dialect: org.hibernate.dialect.H2Dialect
-
-  sql:
-    init:
-      mode: never
-
-logging:
-  level:
-    org.hibernate.SQL: debug
-    org.hibernate.orm.jdbc.bind: trace
+        ddl-auto: none # O Testcontainers usará o seu schema.sql
+      show-sql: true
