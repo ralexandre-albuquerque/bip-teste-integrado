@@ -38,8 +38,7 @@ class BeneficioServiceIntegrationTest {
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("testdb")
             .withUsername("test")
-            .withPassword("test")
-            .withInitScript("db/schema.sql");
+            .withPassword("test")   ;
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
