@@ -34,3 +34,23 @@ jobs:
       - name: Build e Testes de Integração (Maven)
 
         run: mvn -B clean verify
+
+      # --- Início das etapas Angular ---
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'                    # habilita cache automático para dependências
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Install Angular dependencies
+        run: npm ci                     # mais rápido e reprodutível em CI
+        working-directory: ./frontend
+
+      - name: Run Angular unit tests
+        run: npm test -- --watch=false --browsers=ChromeHeadless
+        working-directory: ./frontend
+
+      - name: Build Angular app
+        run: npm run build -- --configuration production
+        working-directory: ./frontend
