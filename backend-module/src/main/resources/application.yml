@@ -1,8 +1,6 @@
 spring:
   application:
     name: beneficios-api
-
-  
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
@@ -12,22 +10,25 @@ spring:
       leak-detection-threshold: 2000
       max-lifetime: 60000
       connection-timeout: 30000
-
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+      data-locations: classpath:db/seed.sql
   h2:
     console:
       enabled: true
       path: /h2-console
-  
   jpa:
     hibernate:
       ddl-auto: none
     show-sql: true
+    defer-datasource-initialization: true
     properties:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.H2Dialect
     open-in-view: false
-
   logging:
       level:
         org.springframework.data: DEBUG
@@ -35,11 +36,8 @@ spring:
         org.hibernate.type.descriptor.sql.BasicBinder: TRACE
         org.springframework.transaction: DEBUG
         org.springframework.orm.jpa: DEBUG
-
-
 server:
   port: 8080
-
 springdoc:
   api-docs:
     path: /api-docs

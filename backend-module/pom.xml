@@ -34,6 +34,8 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+            <version>42.7.5</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- Testcontainers PostgreSQL (Apenas para escopo de teste) -->
