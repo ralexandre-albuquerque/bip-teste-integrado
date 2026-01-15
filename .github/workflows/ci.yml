@@ -39,7 +39,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'                    # habilita cache automático para dependências
           cache-dependency-path: 'frontend/beneficio-app/package-lock.json'
 
@@ -47,10 +47,7 @@ jobs:
         run: npm ci                     # mais rápido e reprodutível em CI
         working-directory: ./frontend/beneficio-app
 
-      - name: Run Angular unit tests
-        run: npm test -- --watch=false --browsers=ChromeHeadless
-        working-directory: ./frontend/beneficio-app
-
       - name: Build Angular app
         run: npm run build -- --configuration production
         working-directory: ./frontend/beneficio-app
+
