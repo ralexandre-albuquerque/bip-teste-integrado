@@ -1,13 +1,17 @@
-# Domain Module
+# Domain Module - Modelo de Dados e Contratos Compartilhados
 
-Módulo responsável por entidades comums em mais de um modulo do sistema.
+Este módulo fornece a base de dados e os contratos utilizados por todos os outros módulos do projeto. Ele garante que a "linguagem onipresente" do sistema seja consistente.
 
-## Estrutura
+## 📦 Conteúdo do Módulo
 
-Contém as entidades JPA que representam o modelo de dados da aplicação.
+- **Entidades JPA**: Mapeamento objeto-relacional com suporte a auditoria e controle de versão (`@Version`).
+- **Business Exceptions**: Definição de exceções de negócio que disparam o rollback transacional.
+- **DTOs**: Records Java para transferência de dados eficiente e imutável.
 
-## Dependências
+## ⚙️ Build e Dependência
 
-- Jakarta Persistence API (JPA)
-- Hibernate Validator
+Este módulo é uma dependência passiva. Para que outros módulos o reconheçam após alterações:
 
+```bash
+mvn install -pl domain-module
+```

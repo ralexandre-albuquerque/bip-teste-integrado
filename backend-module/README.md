@@ -1,30 +1,26 @@
-# Backend Module
+# Backend Module - API Gateway & Integration Layer
 
-API REST do sistema de gestão de benefícios.
+Este módulo é a porta de entrada da aplicação Java, desenvolvido com **Spring Boot 3.x**. Ele é responsável por expor os serviços de negócio para o mundo externo de forma segura e documentada.
 
-## Tecnologias
+## 🛠 Tecnologias e Padrões
 
-- Spring Boot 3.3.11
-- Spring Web MVC
-- Spring Data JPA
-- H2 Database
-- Springdoc OpenAPI 2.8.15
+- **Spring Boot 3.x**: Framework base para a API REST.
+- **OpenAPI 3.0 (Swagger)**: Documentação automatizada e interativa.
+- **JNDI/RMI Client**: Integração transparente com o módulo EJB.
+- **CORS Configuration**: Controle de acesso para o frontend Angular.
 
-## Configuração
+## 🎯 Destaques de Implementação
 
-Configurações em `src/main/resources/application.yml`:
-- Porta: 8080
-- H2 Console: `/h2-console`
-- Swagger UI: `/swagger-ui.html`
+- **Clean Controller**: Uso de interfaces no pacote `openapi` para separar metadados de documentação da lógica do Controller.
+- **Global Exception Handler**: Centralização do tratamento de erros, convertendo `BusinessException` em respostas HTTP semânticas (400, 404, etc.).
+- **DTO Mapping**: Isolamento total entre as entidades de banco de dados e os objetos expostos na API.
 
-## Executar
+## 🚀 Execução e Documentação
+
+Para iniciar apenas este módulo (requer que os módulos `domain` e `ejb` tenham sido instalados via `mvn install`):
 
 ```bash
-mvn spring-boot:run
+mvn spring-boot:run -pl backend-module
 ```
 
-## Acessar
-
-- API: http://localhost:8080
-- Swagger: http://localhost:8080/swagger-ui.html
-- H2 Console: http://localhost:8080/h2-console
+- **Swagger UI**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
